@@ -1,0 +1,83 @@
+clc;
+clear;
+close all;
+
+s = tf('s');
+
+%% Parameters
+D = 0.6;
+R = 10;
+Vg = 30;
+L = 160e-6;
+C = 160e-6;
+
+D_dash = 1-D;
+
+V = -D/D_dash*Vg;
+I = -V/(D_dash*R);
+
+%% Line-to-Output Transfer Function
+G_vg = (D/D_dash)* ...
+    (1/(1 + s*(L/(D_dash^2*R)) + s^2*(L*C/(D_dash^2))));
+
+%% Control-to-Output Transfer Function
+G_vd = ((Vg-V)/D_dash)* ...
+    ((1 - s*(L*I)/(D_dash*(Vg-V))) / ...
+    (1 + s*(L/(D_dash^2*R)) + s^2*(L*C/(D_dash^2))));
+
+%% Frequency vector
+w = logspace(2,6,1000);
+
+%% ==========================
+% Line-to-Output Bode Plot
+%% ==========================
+figure;
+
+h1 = bodeplot(G_vg,w);
+grid on;
+
+opt = getoptions(h1);
+opt.Grid = 'on';
+opt.FreqUnits = 'Hz';
+opt.MagUnits = 'dB';
+setoptions(h1,opt);
+
+set(findall(gcf,'Type','line'),'LineWidth',2.5);
+
+set(findall(gcf,'Type','axes'),...
+    'FontSize',14,...
+    'FontWeight','bold',...
+    'LineWidth',1.5);
+
+sgtitle('Line-to-Output Transfer Function, G_{vg}(s)',...
+    'FontSize',18,'FontWeight','bold');
+
+%% ==========================
+% Control-to-Output Bode Plot
+%% ==========================
+figure;
+
+% Plot Gvd
+h2 = bodeplot(G_vd,w);
+grid on;
+
+% Bode options
+opt = getoptions(h2);
+opt.Grid = 'on';
+opt.FreqUnits = 'Hz';
+opt.MagUnits = 'dB';
+opt.PhaseWrapping = 'off';      % Unwrap phase (0 to -270 deg)
+setoptions(h2,opt);
+
+% Make curves bold
+set(findall(gcf,'Type','line'),'LineWidth',2.5);
+
+% Make axes bold
+set(findall(gcf,'Type','axes'),...
+    'FontSize',14,...
+    'FontWeight','bold',...
+    'LineWidth',1.5);
+
+sgtitle('Control-to-Output Transfer Function, G_{vd}(s)',...
+    'FontSize',18,...
+    'FontWeight','bold');
