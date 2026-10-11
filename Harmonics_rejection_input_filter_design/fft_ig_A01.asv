@@ -1,0 +1,25 @@
+%% Load simulation data
+clear; clc; close all;
+
+load('i_g_current_A01.mat');
+
+%% Extract grid current and time
+i_g = out.i_g;
+t_out = out.tout;
+
+%% Switching frequency
+f_sw = 10e3;       % 10 kHz
+T_sw = 1/f_sw;     % Switching period = 100 us
+
+%% Plot grid current
+figure;
+plot(t_out, i_g, 'LineWidth', 1.5);
+x
+grid on;
+
+xlabel('Time (s)', 'FontWeight', 'bold');
+ylabel('Grid Current (A)', 'FontWeight', 'bold');
+title('Grid Current at Switching Frequency = 10 kHz', ...
+      'FontWeight', 'bold');
+
+set(gca, 'FontSize', 12, 'FontWeight', 'bold');
